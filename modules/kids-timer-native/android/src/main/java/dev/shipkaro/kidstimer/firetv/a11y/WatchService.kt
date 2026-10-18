@@ -25,6 +25,9 @@ class WatchService : AccessibilityService() {
     val pkg = event.packageName?.toString() ?: return
     // System UI / IME windows sit on top of the real app; ignore them.
     if (pkg in IGNORED) return
+    // Overlays (including our own pill), toasts and dialogs also fire this
+    // event. Only a real activity means the app in front changed.
+    if (!isActivity(pkg, event.className?.toString())) return
     if (pkg != foregroundPackage) {
       foregroundPackage = pkg
       listeners.toList().forEach { it(pkg) }
@@ -38,11 +41,28 @@ class WatchService : AccessibilityService() {
     super.onDestroy()
   }
 
+  private val activityCache = mutableMapOf<String, Boolean>()
+
+  private fun isActivity(pkg: String, cls: String?): Boolean {
+    cls ?: return false
+    return activityCache.getOrPut("$pkg/$cls") {
+      runCatching { packageManager.getActivityInfo(ComponentName(pkg, cls), 0) }
+        .map { true }
+        .getOrElse {
+          // Packages hidden by Android 11+ package visibility can't be looked
+          // up; fall back to rejecting plain view/widget classes.
+          pkg != packageName && VIEW_PREFIXES.none { cls.startsWith(it) }
+        }
+    }
+  }
+
   fun lockScreen(): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
       performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
 
   companion object {
+    private val VIEW_PREFIXES = listOf("android.widget.", "android.view.", "android.app.Dialog", "android.app.AlertDialog")
+
     private val IGNORED = setOf(
       "com.android.systemui",
       "com.google.android.inputmethod.latin",

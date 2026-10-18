@@ -62,7 +62,7 @@ class PillOverlay(private val context: Context) {
     val pill = LinearLayout(context).apply {
       orientation = LinearLayout.HORIZONTAL
       gravity = Gravity.CENTER_VERTICAL
-      setPadding(d(38), d(18), d(42), d(18))
+      setPadding(d(38), d(24), d(42), d(24))
       // Fully opaque background, so video never shows through.
       background = GradientDrawable().apply {
         shape = GradientDrawable.RECTANGLE
@@ -111,7 +111,10 @@ class PillOverlay(private val context: Context) {
       x = d(MARGIN_RIGHT)
       y = d(MARGIN_TOP)
     }
-    runCatching { wm.addView(pill, lp) }.onFailure { return }
+    runCatching { wm.addView(pill, lp) }.onFailure {
+      android.util.Log.w("KidsTimer", "pill addView failed", it)
+      return
+    }
     root = pill
     timeView = time
     pauseView = pause

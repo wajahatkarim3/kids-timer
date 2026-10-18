@@ -31,11 +31,22 @@ export function Screen({
   );
 }
 
-// Dark vignette page used by the block screens (28, 30–33).
+// Soft radial glow behind the block screens (28, 30–33), built from stacked
+// translucent ellipses so it needs no extra native gradient library.
+const GLOW_LAYERS = Array.from({ length: 14 }, (_, i) => i);
+
 export function BlockScreen({ children }: { children: ReactNode }) {
   return (
     <View style={styles.blockScreen}>
-      <View style={styles.vignette} />
+      {GLOW_LAYERS.map((i) => (
+        <View
+          key={i}
+          style={[
+            styles.glowLayer,
+            { left: `${2 + i * 2.6}%`, right: `${2 + i * 2.6}%`, top: `${-8 + i * 3.4}%`, bottom: `${-8 + i * 3.4}%` },
+          ]}
+        />
+      ))}
       <View style={styles.blockBody}>{children}</View>
     </View>
   );
@@ -170,18 +181,11 @@ export const styles = StyleSheet.create({
   body: { flex: 1 },
   center: { alignItems: 'center', justifyContent: 'center' },
   blockScreen: { flex: 1, backgroundColor: colors.bgDeep },
-  vignette: {
+  glowLayer: {
     position: 'absolute',
-    left: '15%',
-    right: '15%',
-    top: '10%',
-    bottom: '10%',
-    borderRadius: px(600),
-    backgroundColor: '#0F1C18',
-    opacity: 0.85,
-    shadowColor: '#0F1C18',
-    shadowOpacity: 1,
-    shadowRadius: px(300),
+    borderRadius: px(2000),
+    backgroundColor: '#13221D',
+    opacity: 0.11,
   },
   blockBody: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   title: {

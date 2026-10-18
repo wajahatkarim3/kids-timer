@@ -150,8 +150,8 @@ const styles = StyleSheet.create({
   left: { width: px(908), justifyContent: 'center', paddingBottom: px(150) },
   question: {
     fontFamily: fonts.heavy,
-    fontSize: px(72),
-    lineHeight: px(86),
+    fontSize: px(64),
+    lineHeight: px(80),
     color: colors.text,
     marginTop: px(34),
   },

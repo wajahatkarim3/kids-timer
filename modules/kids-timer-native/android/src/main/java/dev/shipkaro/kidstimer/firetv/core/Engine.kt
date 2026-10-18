@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.util.Log
 import dev.shipkaro.kidstimer.firetv.a11y.WatchService
 import java.util.Calendar
 
@@ -20,6 +21,7 @@ object Engine {
   const val BLOCK_BREAK = "break"
   const val BLOCK_DAILY = "daily"
 
+  private const val TAG = "KidsTimer"
   private const val TICK_MS = 1000L
   private const val MIN_MS = 60_000L
 
@@ -75,7 +77,7 @@ object Engine {
   private val tickRunnable = object : Runnable {
     override fun run() {
       if (!running) return
-      runCatching { tick() }
+      runCatching { tick() }.onFailure { Log.w(TAG, "tick failed", it) }
       handler.postDelayed(this, TICK_MS)
     }
   }

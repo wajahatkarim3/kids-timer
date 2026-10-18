@@ -22,12 +22,13 @@ class KidsTimerModule : Module() {
 
     Events("onState", "onDigit")
 
+    // Listen for the module's whole life: OnStopObserving fires when the last
+    // listener of *any* event goes away (e.g. onDigit), which would cut state.
     OnCreate {
       appContext.reactContext?.let { EngineService.start(it) }
+      Engine.listeners.add(stateListener)
     }
-
-    OnStartObserving { Engine.listeners.add(stateListener) }
-    OnStopObserving { Engine.listeners.remove(stateListener) }
+    OnDestroy { Engine.listeners.remove(stateListener) }
 
     OnActivityEntersForeground {
       Engine.appVisible = true
