@@ -27,7 +27,9 @@
         "@react-native-tvos/config-tv",
         {
           "isTV": true,
-          "showVerboseWarnings": false
+          "showVerboseWarnings": false,
+          "androidTVBanner": "./assets/tv-banner.png",
+          "androidTVIcon": "./assets/tv-icon.png"
         }
       ],
       "expo-font"

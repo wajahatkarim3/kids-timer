@@ -78,7 +78,7 @@ export function GrownUpActive() {
 
 const styles = StyleSheet.create({
   chooserScreen: { paddingHorizontal: px(112), paddingTop: px(70) },
-  emoji: { textAlign: 'left', marginTop: px(24) },
+  emoji: { textAlign: 'left', marginTop: px(62) },
   title: { textAlign: 'left', fontSize: px(72), lineHeight: px(90), marginTop: px(8) },
   subtitle: { textAlign: 'left', fontFamily: fonts.regular, fontSize: px(36), marginTop: px(6) },
   options: { flexDirection: 'row', gap: px(28), marginTop: px(56) },

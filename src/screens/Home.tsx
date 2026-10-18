@@ -62,6 +62,7 @@ export function Home() {
           </View>
           <FocusButton
             variant="raised"
+            preferredFocus
             label="Turn limits back on"
             onPress={() => {
               setBannerHidden(true);
@@ -83,7 +84,7 @@ export function Home() {
             minutes={p}
             selected={p === minutes}
             compact={showBanner}
-            preferredFocus={p === minutes}
+            preferredFocus={!showBanner && p === minutes}
             onPress={() => setMinutes(p)}
           />
         ))}
