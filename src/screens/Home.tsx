@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { FocusButton } from '../components/FocusButton';
 import { Emoji, RoundButton, Screen, Title } from '../components/ui';
 import { native, useEngine } from '../engine';
+import { usePermissions } from '../hooks/usePermissions';
 import { clock, isForever, minutesLabel, msToMin, timeOfDay } from '../format';
 import { useNav } from '../nav';
 import { colors, fonts, px } from '../theme';
@@ -30,7 +31,12 @@ export function Home() {
     native.setItem('timerMin', String(v));
   };
 
-  const showBanner = state.grownActive && !bannerHidden;
+  const perms = usePermissions();
+  const missing = !perms.overlay ? 'Timer over apps' : !perms.accessibility ? 'Spot the app' : null;
+  const showGrown = state.grownActive && !bannerHidden;
+  // A permission turned off later: point grown-ups to Setup check.
+  const showFix = !showGrown && missing != null;
+  const showBanner = showGrown || showFix;
   const status = autoStartStatus(state);
 
   const header = (
@@ -48,7 +54,24 @@ export function Home() {
 
   return (
     <Screen right={header} style={styles.screen}>
-      {showBanner && (
+      {showFix && (
+        <View style={styles.banner}>
+          <Emoji size={52}>⚠️</Emoji>
+          <View style={styles.bannerText}>
+            <Text style={styles.bannerTitle}>Setup needs a grown-up</Text>
+            <Text style={styles.bannerSub}>{missing} is off — the timer can't watch apps.</Text>
+          </View>
+          <FocusButton
+            variant="raised"
+            preferredFocus
+            label="Fix"
+            onPress={() => nav.push({ name: 'setupCheck' })}
+            style={[styles.bannerButton, styles.fixButton]}
+            textStyle={styles.bannerButtonText}
+          />
+        </View>
+      )}
+      {showGrown && (
         <View style={styles.banner}>
           <Emoji size={52}>🎬</Emoji>
           <View style={styles.bannerText}>
@@ -196,6 +219,7 @@ const styles = StyleSheet.create({
   bannerSub: { fontFamily: fonts.bold, fontSize: px(30), color: colors.textMuted },
   bannerButton: { height: px(96), minHeight: 0, borderRadius: px(32), backgroundColor: '#111917' },
   bannerButtonText: { fontSize: px(38), color: colors.mint },
+  fixButton: { width: px(200) },
   title: { textAlign: 'left', marginTop: px(70) },
   titleCompact: { marginTop: px(28), fontSize: px(72), lineHeight: px(88) },
   subtitle: { fontFamily: fonts.bold, fontSize: px(36), color: colors.textMuted, marginTop: px(8) },
