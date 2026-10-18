@@ -1,0 +1,8 @@
+{
+  "name": "kids-timer-native",
+  "version": "0.1.0",
+  "description": "Native Fire OS services for Kids Timer: timer engine, countdown pill overlay and app watch service.",
+  "main": "index.ts",
+  "license": "MIT",
+  "private": true
+}

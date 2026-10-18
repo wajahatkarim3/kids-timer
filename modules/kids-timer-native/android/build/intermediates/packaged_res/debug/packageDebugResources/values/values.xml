@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kt_watch_service_description">Lets Kids Timer see which app is on screen so screen time only counts while a limited app is open, and turn the TV off when time is up.</string>
+    <string name="kt_watch_service_label">Kids Timer</string>
+</resources>

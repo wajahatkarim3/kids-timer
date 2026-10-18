@@ -1,0 +1,42 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="dev.shipkaro.kidstimer.firetv.core" >
+4
+5    <uses-sdk android:minSdkVersion="24" />
+6
+7    <!-- Countdown pill floating over other apps. -->
+8    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+8-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:4:3-76
+8-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:4:20-73
+9
+10    <application>
+10-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:6:3-20:17
+11
+12        <!-- Sees which app is in front and can turn the screen off. -->
+13        <service
+13-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:8:5-19:15
+14            android:name="dev.shipkaro.kidstimer.firetv.a11y.WatchService"
+14-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:9:7-69
+15            android:exported="false"
+15-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:10:7-31
+16            android:label="@string/kt_watch_service_label"
+16-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:11:7-53
+17            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+17-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:12:7-73
+18            <intent-filter>
+18-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:13:7-15:23
+19                <action android:name="android.accessibilityservice.AccessibilityService" />
+19-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:14:9-84
+19-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:14:17-81
+20            </intent-filter>
+21
+22            <meta-data
+22-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:16:7-18:52
+23                android:name="android.accessibilityservice"
+23-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:17:9-52
+24                android:resource="@xml/kt_watch_service" />
+24-->/Users/wajahatkarim/My Work/shipkaro/Apps/kids-timer-rn/modules/kids-timer-native/android/src/main/AndroidManifest.xml:18:9-49
+25        </service>
+26    </application>
+27
+28</manifest>

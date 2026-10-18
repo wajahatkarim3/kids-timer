@@ -10,6 +10,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Brand } from './src/components/Brand';
 import { FocusButton } from './src/components/FocusButton';
 import { colors, fonts, px, SAFE_TOP, SAFE_X } from './src/theme';
+import KidsTimerNative from './modules/kids-timer-native';
+import { usePermissions } from './src/hooks/usePermissions';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -18,6 +20,7 @@ export default function App() {
     Nunito_800ExtraBold,
     Nunito_900Black,
   });
+  const perms = usePermissions();
 
   if (!fontsLoaded) {
     return <View style={styles.root} />;
@@ -30,9 +33,20 @@ export default function App() {
       <View style={styles.center}>
         <Text style={styles.title}>Hi! Let's set up Kids Timer</Text>
         <View style={styles.row}>
-          <FocusButton label="Let's go ▶" variant="primary" preferredFocus />
-          <FocusButton label="Skip" />
+          <FocusButton
+            label="Overlay settings"
+            variant="primary"
+            preferredFocus
+            onPress={() => KidsTimerNative.openOverlaySettings()}
+          />
+          <FocusButton
+            label="Accessibility settings"
+            onPress={() => KidsTimerNative.openAccessibilitySettings()}
+          />
         </View>
+        <Text style={styles.status}>
+          overlay: {String(perms.overlay)} · accessibility: {String(perms.accessibility)}
+        </Text>
       </View>
     </View>
   );
@@ -48,4 +62,5 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   title: { fontFamily: fonts.heavy, fontSize: px(84), color: colors.text, marginBottom: px(48) },
   row: { flexDirection: 'row', gap: px(24) },
+  status: { fontFamily: fonts.regular, fontSize: px(32), color: colors.textMuted, marginTop: px(40) },
 });

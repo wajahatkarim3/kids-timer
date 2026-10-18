@@ -1,0 +1,4 @@
+dev.shipkaro.kidstimer.firetv.core
+string kt_watch_service_description
+string kt_watch_service_label
+xml kt_watch_service

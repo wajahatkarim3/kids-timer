@@ -8,7 +8,8 @@
     "start": "EXPO_TV=1 expo start",
     "android": "EXPO_TV=1 expo run:android",
     "prebuild": "EXPO_TV=1 expo prebuild --clean --platform android",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@expo-google-fonts/nunito": "^0.4.2",

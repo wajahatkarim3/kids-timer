@@ -1,0 +1,6 @@
+{
+  "platforms": ["android"],
+  "android": {
+    "modules": ["dev.shipkaro.kidstimer.firetv.core.KidsTimerModule"]
+  }
+}

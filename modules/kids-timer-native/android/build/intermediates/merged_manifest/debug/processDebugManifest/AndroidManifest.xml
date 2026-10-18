@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="dev.shipkaro.kidstimer.firetv.core" >
+
+    <uses-sdk android:minSdkVersion="24" />
+
+    <!-- Countdown pill floating over other apps. -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <application>
+
+        <!-- Sees which app is in front and can turn the screen off. -->
+        <service
+            android:name="dev.shipkaro.kidstimer.firetv.a11y.WatchService"
+            android:exported="false"
+            android:label="@string/kt_watch_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/kt_watch_service" />
+        </service>
+    </application>
+
+</manifest>
