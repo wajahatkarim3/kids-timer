@@ -1,7 +1,6 @@
 import { NativeModule, requireNativeModule } from 'expo-modules-core';
 
 export type Permissions = {
-  overlay: boolean;
   accessibility: boolean;
   admin: boolean;
 };
@@ -77,7 +76,6 @@ declare class KidsTimerNativeModule extends NativeModule<Events> {
   turnScreenOff(): boolean;
 
   getPermissions(): Permissions;
-  openOverlaySettings(): boolean;
   openAccessibilitySettings(): boolean;
   requestAdmin(): boolean;
   removeAdmin(): boolean;

@@ -32,10 +32,10 @@ export function Home() {
   };
 
   const perms = usePermissions();
-  const missing = !perms.overlay ? 'Timer over apps' : !perms.accessibility ? 'Spot the app' : null;
+  const missing = !perms.accessibility;
   const showGrown = state.grownActive && !bannerHidden;
   // A permission turned off later: point grown-ups to Setup check.
-  const showFix = !showGrown && missing != null;
+  const showFix = !showGrown && missing;
   const showBanner = showGrown || showFix;
   const status = autoStartStatus(state);
 
@@ -59,7 +59,7 @@ export function Home() {
           <Emoji size={52}>⚠️</Emoji>
           <View style={styles.bannerText}>
             <Text style={styles.bannerTitle}>Setup needs a grown-up</Text>
-            <Text style={styles.bannerSub}>{missing} is off — the timer can't watch apps.</Text>
+            <Text style={styles.bannerSub}>"Spot the app" is off — the timer can't run.</Text>
           </View>
           <FocusButton
             variant="raised"

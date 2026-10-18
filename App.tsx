@@ -38,7 +38,7 @@ function entryRoute(): Route {
     : { name: 'lock', reason: 'open', then: { name: 'home' } };
 }
 
-const ONBOARDING = new Set(['welcome', 'permOverlay', 'permA11y', 'lookAway', 'allSet']);
+const ONBOARDING = new Set(['welcome', 'permA11y', 'lookAway', 'allSet']);
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -109,8 +109,6 @@ function Router() {
   switch (route.name) {
     case 'welcome':
       return <Welcome />;
-    case 'permOverlay':
-      return <Permission kind="overlay" onNext={() => nav.push({ name: 'permA11y' })} />;
     case 'permA11y':
       return <Permission kind="accessibility" onNext={() => nav.push({ name: 'lookAway' })} />;
     case 'lookAway':

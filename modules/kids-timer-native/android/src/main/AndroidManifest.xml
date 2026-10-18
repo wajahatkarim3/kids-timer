@@ -1,7 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <!-- Countdown pill floating over other apps. -->
-  <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
   <!-- Engine keeps counting while other apps are on screen. -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />

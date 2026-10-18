@@ -64,8 +64,11 @@ export function Subtitle({ children, style }: { children: ReactNode; style?: Sty
   return <Text style={[styles.subtitle, style]}>{children}</Text>;
 }
 
+/** Setup steps: accessibility, secret number, apps. */
+export const SETUP_STEPS = 3;
+
 /** Onboarding progress: done dots, a long active pill, upcoming dim dots. */
-export function ProgressDots({ step, total = 4 }: { step: number; total?: number }) {
+export function ProgressDots({ step, total = SETUP_STEPS }: { step: number; total?: number }) {
   return (
     <View style={styles.dots}>
       {Array.from({ length: total }, (_, i) => (

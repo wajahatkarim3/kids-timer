@@ -56,7 +56,7 @@ object Engine {
     if (::app.isInitialized) return
     app = context.applicationContext
     store = Store(app)
-    pill = PillOverlay(app)
+    pill = PillOverlay()
     rollDay(System.currentTimeMillis())
   }
 

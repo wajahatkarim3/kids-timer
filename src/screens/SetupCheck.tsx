@@ -17,7 +17,6 @@ export function SetupCheck() {
   };
 
   const rows = [
-    { emoji: '📺', title: 'Timer over apps', on: perms.overlay, action: open(native.openOverlaySettings), cta: 'Settings' },
     { emoji: '👀', title: 'Spot the app + TV off', on: perms.accessibility, action: open(native.openAccessibilitySettings), cta: 'Settings' },
     {
       emoji: '🔌',

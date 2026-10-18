@@ -56,7 +56,7 @@ export function Apps({ onboarding }: { onboarding: boolean }) {
 
   const right = onboarding ? (
     <>
-      <ProgressDots step={3} />
+      <ProgressDots step={2} />
       <FocusButton
         variant="primary"
         label="Next ▶"

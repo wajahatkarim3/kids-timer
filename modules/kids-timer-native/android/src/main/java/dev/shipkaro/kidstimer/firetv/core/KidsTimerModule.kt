@@ -4,7 +4,6 @@ import android.app.admin.DevicePolicyManager
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.provider.Settings
 import dev.shipkaro.kidstimer.firetv.a11y.WatchService
 import expo.modules.kotlin.exception.Exceptions
@@ -88,18 +87,8 @@ class KidsTimerModule : Module() {
     Function("getPermissions") {
       val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
       mapOf(
-        "overlay" to Settings.canDrawOverlays(context),
         "accessibility" to WatchService.isEnabled(context),
         "admin" to dpm.isAdminActive(Engine.adminComponent(context)),
-      )
-    }
-
-    Function("openOverlaySettings") {
-      val pkgUri = Uri.parse("package:${context.packageName}")
-      startFirst(
-        Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, pkgUri),
-        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, pkgUri),
-        Intent(Settings.ACTION_SETTINGS),
       )
     }
 

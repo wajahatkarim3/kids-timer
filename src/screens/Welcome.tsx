@@ -31,7 +31,7 @@ export function Welcome() {
           variant="primary"
           preferredFocus
           label="Let's go ▶"
-          onPress={() => nav.push({ name: 'permOverlay' })}
+          onPress={() => nav.push({ name: 'permA11y' })}
           style={styles.cta}
           textStyle={styles.ctaText}
         />

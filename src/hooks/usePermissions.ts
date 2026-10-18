@@ -11,7 +11,7 @@ export function usePermissions(pollMs = 2000): Permissions {
     const refresh = () => {
       const next = KidsTimerNative.getPermissions();
       setPerms((prev) =>
-        prev.overlay === next.overlay && prev.accessibility === next.accessibility && prev.admin === next.admin
+        prev.accessibility === next.accessibility && prev.admin === next.admin
           ? prev
           : next,
       );

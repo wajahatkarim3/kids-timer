@@ -7,21 +7,24 @@ import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
-import android.provider.Settings
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.TextView
+import dev.shipkaro.kidstimer.firetv.a11y.WatchService
 import kotlin.random.Random
 
 /**
  * The countdown pill floating in the top-right corner over any app.
+ * It is drawn as an accessibility overlay through [WatchService], so no
+ * "Display over other apps" permission is needed.
  * Sizes come from the 1920x1080 design and are scaled to the real screen.
  */
-class PillOverlay(private val context: Context) {
-  private val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+class PillOverlay {
+  private var host: Context? = null
+  private var wm: WindowManager? = null
   private var root: LinearLayout? = null
   private var timeView: TextView? = null
   private var pauseView: TextView? = null
@@ -33,16 +36,26 @@ class PillOverlay(private val context: Context) {
 
   // displayMetrics instead of currentWindowMetrics: Fire OS 7 is API 28.
   private val scale: Float
-    get() = context.resources.displayMetrics.let { maxOf(it.widthPixels, it.heightPixels) } / 1920f
+    get() {
+      val metrics = host?.resources?.displayMetrics ?: return 1f
+      return maxOf(metrics.widthPixels, metrics.heightPixels) / 1920f
+    }
 
   private fun d(ref: Int): Int = (ref * scale).toInt().coerceAtLeast(1)
 
   private var belowClock = false
 
   fun update(remainingMs: Long, paused: Boolean, belowHomeClock: Boolean = false) {
-    if (!Settings.canDrawOverlays(context)) {
+    val service = WatchService.instance
+    if (service == null) {
       hide()
       return
+    }
+    if (service !== host) {
+      // The accessibility service (re)connected: draw through the new one.
+      hide()
+      host = service
+      wm = service.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     }
     if (root == null) create()
     timeView?.text = format(remainingMs)
@@ -58,13 +71,15 @@ class PillOverlay(private val context: Context) {
   fun hide() {
     pulse?.cancel()
     pulse = null
-    root?.let { runCatching { wm.removeView(it) } }
+    root?.let { view -> runCatching { wm?.removeView(view) } }
     root = null
     timeView = null
     pauseView = null
   }
 
   private fun create() {
+    val context = host ?: return
+    val windows = wm ?: return
     val pill = LinearLayout(context).apply {
       orientation = LinearLayout.HORIZONTAL
       gravity = Gravity.CENTER_VERTICAL
@@ -107,7 +122,7 @@ class PillOverlay(private val context: Context) {
     val lp = WindowManager.LayoutParams(
       WindowManager.LayoutParams.WRAP_CONTENT,
       WindowManager.LayoutParams.WRAP_CONTENT,
-      WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+      WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY,
       WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
         WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
@@ -117,7 +132,7 @@ class PillOverlay(private val context: Context) {
       x = d(MARGIN_RIGHT)
       y = d(MARGIN_TOP)
     }
-    runCatching { wm.addView(pill, lp) }.onFailure {
+    runCatching { windows.addView(pill, lp) }.onFailure {
       android.util.Log.w("KidsTimer", "pill addView failed", it)
       return
     }
@@ -153,7 +168,7 @@ class PillOverlay(private val context: Context) {
     val lp = params ?: return
     lp.x = d(MARGIN_RIGHT + shiftX)
     lp.y = d((if (belowClock) MARGIN_TOP_HOME else MARGIN_TOP) + shiftY)
-    root?.let { runCatching { wm.updateViewLayout(it, lp) } }
+    root?.let { view -> runCatching { wm?.updateViewLayout(view, lp) } }
   }
 
   companion object {

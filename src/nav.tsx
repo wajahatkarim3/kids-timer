@@ -6,7 +6,6 @@ export type LockReason = 'open' | 'timer' | 'addTime';
 
 export type Route =
   | { name: 'welcome' }
-  | { name: 'permOverlay' }
   | { name: 'permA11y' }
   | { name: 'lookAway' }
   | { name: 'secret'; onboarding: boolean }

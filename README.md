@@ -36,13 +36,14 @@ Everything is driven by the remote: up / down / left / right, OK and Back, with 
 │  Engine ── ticks every second, owns all rules + storage   │
 │    ├─ EngineService   foreground service, restarts on boot│
 │    ├─ WatchService    accessibility: app in front, TV off │
-│    ├─ PillOverlay     TYPE_APPLICATION_OVERLAY window     │
+│    ├─ PillOverlay     accessibility overlay window        │
 │    ├─ AppsRepo        installed TV apps + icons           │
 │    └─ AdminReceiver   optional "Backup TV off"            │
 └───────────────────────────────────────────────────────────┘
 ```
 
 - The **engine** lives in Kotlin so the countdown keeps running while the React Native UI is closed. State is saved to SharedPreferences on every change.
+- The **pill** is drawn as an accessibility overlay through the watch service, so the app needs no "Display over other apps" permission.
 - The **watch service** only treats real activities as "the app in front" (overlays, toasts and our own pill are ignored), so time is counted for the right app.
 - When a block is needed, the engine opens Kids Timer on top of the blocked app with the block screen. The screen is turned off with the accessibility service (`GLOBAL_ACTION_LOCK_SCREEN`), or with the optional device admin.
 
@@ -67,17 +68,13 @@ Fire TV Stick: **Settings › My Fire TV › Developer options › ADB debugging
 
 ### Permissions
 
-Kids Timer needs two permissions, and setup won't continue without them (there is no Skip): the pill, counting and TV off all depend on them.
+Kids Timer needs one permission, and setup won't continue without it (there is no Skip): **Accessibility › Kids Timer**. It lets the app see which app is in front, draw the countdown pill over it, open block screens and turn the TV off. "Open settings" lands on the TV's Accessibility page; Kids Timer is listed under Services.
 
-1. **Display over other apps** — "Open settings" lands on the system list; turn Kids Timer on there.
-2. **Accessibility › Kids Timer** — lets the app see which app is in front and turn the TV off.
+If it is turned off later, Home shows a "Setup needs a grown-up" banner with **Fix**, which opens Setup check.
 
-If either is turned off later, Home shows a "Setup needs a grown-up" banner with **Fix**, which opens Setup check.
-
-Developer shortcut (emulator / debugging only): reinstalling, `am force-stop` or `pm clear` turns the accessibility service off. To turn both back on without clicking through settings:
+Developer shortcut (emulator / debugging only): reinstalling, `am force-stop` or `pm clear` turns the accessibility service off. To turn it back on without clicking through settings:
 
 ```bash
-adb shell appops set dev.shipkaro.kidstimer.firetv SYSTEM_ALERT_WINDOW allow
 adb shell settings put secure enabled_accessibility_services dev.shipkaro.kidstimer.firetv/dev.shipkaro.kidstimer.firetv.a11y.WatchService
 adb shell settings put secure accessibility_enabled 1
 ```

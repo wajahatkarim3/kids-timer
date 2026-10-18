@@ -16,7 +16,7 @@ export function SecretNumber({ onboarding }: { onboarding: boolean }) {
   const set = (n: number) => native.setSettings({ secret: Math.min(MAX, Math.max(MIN, n)) });
 
   return (
-    <Screen right={onboarding ? <ProgressDots step={2} /> : undefined}>
+    <Screen right={onboarding ? <ProgressDots step={1} /> : undefined}>
       <View style={[styles.body, !onboarding && styles.bodySettings]}>
         <Emoji size={150}>🔑</Emoji>
         <Title style={styles.title}>Pick a secret number</Title>

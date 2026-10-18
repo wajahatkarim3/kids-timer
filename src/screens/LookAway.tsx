@@ -8,7 +8,7 @@ import { px } from '../theme';
 export function LookAway() {
   const nav = useNav();
   return (
-    <Screen right={<ProgressDots step={2} />}>
+    <Screen right={<ProgressDots step={1} />}>
       <View style={styles.body}>
         <Emoji size={160}>🙈</Emoji>
         <Title style={styles.title}>Kids, look away!</Title>

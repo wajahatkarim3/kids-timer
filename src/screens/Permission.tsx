@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { FocusButton } from '../components/FocusButton';
-import { Emoji, ProgressDots, Screen, StatusChip, Subtitle, Title } from '../components/ui';
+import { Emoji, ProgressDots, Screen, SETUP_STEPS, StatusChip, Subtitle, Title } from '../components/ui';
 import { native } from '../engine';
 import { usePermissions } from '../hooks/usePermissions';
 import { useNav } from '../nav';
@@ -8,15 +8,8 @@ import { px } from '../theme';
 import { expectExternalReturn } from '../relock';
 
 const KINDS = {
-  overlay: {
-    step: 0,
-    emoji: '📺',
-    title: 'Show the timer',
-    subtitle: 'Allow “Display over other apps”',
-    open: () => native.openOverlaySettings(),
-  },
   accessibility: {
-    step: 1,
+    step: 0,
     emoji: '👀',
     title: 'Spot the app',
     subtitle: 'Accessibility › Kids Timer › On',
@@ -24,15 +17,16 @@ const KINDS = {
   },
 } as const;
 
-// 02–06 — ask for one permission, flip to "Turned on" once granted.
-// No Skip: the pill, counting and TV off all depend on these.
+// 04–06 — the one permission: accessibility. It lets Kids Timer see the app
+// in front, draw the pill over it and turn the TV off. No Skip: nothing works
+// without it.
 export function Permission({ kind, onNext }: { kind: keyof typeof KINDS; onNext: () => void }) {
   const perms = usePermissions(1000);
   const k = KINDS[kind];
   const on = perms[kind];
 
   return (
-    <Screen right={<ProgressDots step={k.step} />}>
+    <Screen right={<ProgressDots step={k.step} total={SETUP_STEPS} />}>
       {on ? (
         <View style={styles.bodyOn}>
           <Emoji size={150}>{k.emoji}</Emoji>
