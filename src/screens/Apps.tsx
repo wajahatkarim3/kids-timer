@@ -9,6 +9,11 @@ import { colors, fonts, px } from '../theme';
 
 const OWN = 'dev.shipkaro.kidstimer.firetv';
 
+// The list shows whole rows only, so nothing is ever cut in half.
+const ROW_H = 118;
+const ROW_GAP = 20;
+const listHeight = (rows: number) => px(rows * ROW_H + (rows - 1) * ROW_GAP + 24);
+
 // First-run suggestion: count everything except Kids Timer and system settings.
 const NEVER_COUNTED = /(^|\.)(settings|tvsettings)(\.|$)/;
 
@@ -70,7 +75,11 @@ export function Apps({ onboarding }: { onboarding: boolean }) {
       <Title style={styles.title}>Which apps count?</Title>
       {!onboarding && <Subtitle style={styles.subtitle}>Turn On the apps to limit.</Subtitle>}
       <ScrollView
-        style={[styles.list, onboarding ? styles.listOnboarding : styles.listSettings]}
+        style={[
+          styles.list,
+          onboarding ? styles.listOnboarding : styles.listSettings,
+          { height: listHeight(onboarding ? 5 : 4), flexGrow: 0 },
+        ]}
         contentContainerStyle={styles.listContent}
       >
         {apps?.map((app, i) => {
@@ -123,11 +132,11 @@ const styles = StyleSheet.create({
   title: { textAlign: 'left', fontSize: px(64), lineHeight: px(80), marginTop: px(50) },
   subtitle: { textAlign: 'left', fontSize: px(34), marginTop: px(4) },
   list: { marginHorizontal: -px(12) },
-  listOnboarding: { marginTop: px(36), marginBottom: px(40) },
-  listSettings: { marginTop: px(32), marginBottom: px(130) },
-  listContent: { gap: px(20), padding: px(12) },
+  listOnboarding: { marginTop: px(36) },
+  listSettings: { marginTop: px(32) },
+  listContent: { gap: px(ROW_GAP), padding: px(12) },
   row: {
-    height: px(118),
+    height: px(ROW_H),
     borderRadius: px(28),
     backgroundColor: colors.surface,
     flexDirection: 'row',
