@@ -2,8 +2,33 @@
 
   <!-- Countdown pill floating over other apps. -->
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+  <!-- Engine keeps counting while other apps are on screen. -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+  <!-- List installed TV apps for "Which apps count?". -->
+  <queries>
+    <intent>
+      <action android:name="android.intent.action.MAIN" />
+      <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+    </intent>
+    <intent>
+      <action android:name="android.intent.action.MAIN" />
+      <category android:name="android.intent.category.LAUNCHER" />
+    </intent>
+  </queries>
 
   <application>
+    <service
+      android:name="dev.shipkaro.kidstimer.firetv.core.EngineService"
+      android:exported="false"
+      android:foregroundServiceType="specialUse">
+      <property
+        android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+        android:value="Parental screen-time timer that counts down while other apps are on screen." />
+    </service>
+
     <!-- Sees which app is in front and can turn the screen off. -->
     <service
       android:name="dev.shipkaro.kidstimer.firetv.a11y.WatchService"
@@ -17,5 +42,27 @@
         android:name="android.accessibilityservice"
         android:resource="@xml/kt_watch_service" />
     </service>
+
+    <receiver
+      android:name="dev.shipkaro.kidstimer.firetv.core.BootReceiver"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+      </intent-filter>
+    </receiver>
+
+    <!-- Optional backup way to turn the TV off. -->
+    <receiver
+      android:name="dev.shipkaro.kidstimer.firetv.core.AdminReceiver"
+      android:exported="true"
+      android:label="@string/kt_watch_service_label"
+      android:permission="android.permission.BIND_DEVICE_ADMIN">
+      <meta-data
+        android:name="android.app.device_admin"
+        android:resource="@xml/kt_device_admin" />
+      <intent-filter>
+        <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+      </intent-filter>
+    </receiver>
   </application>
 </manifest>
