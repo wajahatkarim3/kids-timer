@@ -23,16 +23,13 @@ object AppsRepo {
     val query = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LEANBACK_LAUNCHER)
     for (info in pm.queryIntentActivities(query, 0)) {
       val pkg = info.activityInfo.packageName
-      if (pkg in seen || HIDDEN.any { pkg.startsWith(it) }) continue
+      // Kids Timer itself never counts, so it isn't listed.
+      if (pkg in seen || pkg == context.packageName || HIDDEN.any { pkg.startsWith(it) }) continue
       val label = info.loadLabel(pm).toString()
       val icon = iconCache.getOrPut(pkg) { encode(info.loadIcon(pm)) }
       seen[pkg] = mapOf("pkg" to pkg, "label" to label, "icon" to icon)
     }
-    // Our own app first (as in the design), then A-Z.
-    return seen.values.sortedWith(
-      compareBy<Map<String, Any?>> { it["pkg"] != context.packageName }
-        .thenBy { (it["label"] as String).lowercase() },
-    )
+    return seen.values.sortedBy { (it["label"] as String).lowercase() }
   }
 
   private fun encode(drawable: Drawable, size: Int = 96): String {

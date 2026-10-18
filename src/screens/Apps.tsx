@@ -7,18 +7,14 @@ import { native, useEngine } from '../engine';
 import { useNav } from '../nav';
 import { colors, fonts, px } from '../theme';
 
-const OWN = 'dev.shipkaro.kidstimer.firetv';
-
 // The list shows whole rows only, so nothing is ever cut in half.
 const ROW_H = 118;
 const ROW_GAP = 20;
 const listHeight = (rows: number) => px(rows * ROW_H + (rows - 1) * ROW_GAP + 24);
 
-// First-run suggestion: count everything except Kids Timer and system settings.
-const NEVER_COUNTED = /(^|\.)(settings|tvsettings)(\.|$)/;
-
+// First-run suggestion: count every listed TV app.
 function defaultCounted(apps: InstalledApp[]): string[] {
-  return apps.map((a) => a.pkg).filter((p) => p !== OWN && !NEVER_COUNTED.test(p));
+  return apps.map((a) => a.pkg);
 }
 
 // 08 (onboarding) and 18 (App auto-start) — which apps use screen time.
