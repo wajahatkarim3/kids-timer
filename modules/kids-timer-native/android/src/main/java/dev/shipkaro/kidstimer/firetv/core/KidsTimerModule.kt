@@ -20,7 +20,7 @@ class KidsTimerModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("KidsTimerNative")
 
-    Events("onState")
+    Events("onState", "onDigit")
 
     OnCreate {
       appContext.reactContext?.let { EngineService.start(it) }
@@ -29,7 +29,10 @@ class KidsTimerModule : Module() {
     OnStartObserving { Engine.listeners.add(stateListener) }
     OnStopObserving { Engine.listeners.remove(stateListener) }
 
-    OnActivityEntersForeground { Engine.appVisible = true }
+    OnActivityEntersForeground {
+      Engine.appVisible = true
+      installDigitHook()
+    }
     OnActivityEntersBackground { Engine.appVisible = false }
 
     // ---- state ----
@@ -117,6 +120,13 @@ class KidsTimerModule : Module() {
         Intent(Settings.ACTION_SECURITY_SETTINGS),
       )
     }
+  }
+
+  private fun installDigitHook() {
+    val window = appContext.currentActivity?.window ?: return
+    val current = window.callback ?: return
+    if (current is DigitKeyCallback) return
+    window.callback = DigitKeyCallback(current) { sendEvent("onDigit", mapOf("digit" to it)) }
   }
 
   // Fire OS hides some settings screens; fall back until one opens.

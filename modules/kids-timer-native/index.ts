@@ -47,6 +47,7 @@ export type InstalledApp = { pkg: string; label: string; icon: string };
 
 type Events = {
   onState(state: EngineState): void;
+  onDigit(event: { digit: number }): void;
 };
 
 declare class KidsTimerNativeModule extends NativeModule<Events> {
