@@ -1,3 +1,0 @@
-int string kt_watch_service_description 0x0
-int string kt_watch_service_label 0x0
-int xml kt_watch_service 0x0
