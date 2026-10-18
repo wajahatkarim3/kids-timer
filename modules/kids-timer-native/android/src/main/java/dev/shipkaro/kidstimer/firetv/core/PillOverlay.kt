@@ -37,7 +37,9 @@ class PillOverlay(private val context: Context) {
 
   private fun d(ref: Int): Int = (ref * scale).toInt().coerceAtLeast(1)
 
-  fun update(remainingMs: Long, paused: Boolean) {
+  private var belowClock = false
+
+  fun update(remainingMs: Long, paused: Boolean, belowHomeClock: Boolean = false) {
     if (!Settings.canDrawOverlays(context)) {
       hide()
       return
@@ -46,6 +48,10 @@ class PillOverlay(private val context: Context) {
     timeView?.text = format(remainingMs)
     pauseView?.visibility = if (paused) View.VISIBLE else View.GONE
     updatePulse(!paused && remainingMs in 1..PULSE_WINDOW_MS)
+    if (belowHomeClock != belowClock) {
+      belowClock = belowHomeClock
+      lastShiftMinute = -1 // re-place now
+    }
     updateShift()
   }
 
@@ -146,13 +152,14 @@ class PillOverlay(private val context: Context) {
     shiftY = Random.nextInt(-SHIFT, SHIFT + 1)
     val lp = params ?: return
     lp.x = d(MARGIN_RIGHT + shiftX)
-    lp.y = d(MARGIN_TOP + shiftY)
+    lp.y = d((if (belowClock) MARGIN_TOP_HOME else MARGIN_TOP) + shiftY)
     root?.let { runCatching { wm.updateViewLayout(it, lp) } }
   }
 
   companion object {
     private const val MARGIN_RIGHT = 58
     private const val MARGIN_TOP = 57
+    private const val MARGIN_TOP_HOME = 170
     private const val SHIFT = 6
     private const val PULSE_WINDOW_MS = 5 * 60_000L
 

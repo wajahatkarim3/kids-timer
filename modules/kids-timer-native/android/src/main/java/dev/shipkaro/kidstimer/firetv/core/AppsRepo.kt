@@ -12,18 +12,21 @@ import java.io.ByteArrayOutputStream
 object AppsRepo {
   private val iconCache = mutableMapOf<String, String>()
 
+  // System settings never make sense as a "counted" app.
+  private val HIDDEN = listOf("com.android.tv.settings", "com.amazon.tv.settings", "com.android.settings")
+
   fun installed(context: Context): List<Map<String, Any?>> {
     val pm = context.packageManager
     val seen = linkedMapOf<String, Map<String, Any?>>()
-    for (category in listOf(Intent.CATEGORY_LEANBACK_LAUNCHER, Intent.CATEGORY_LAUNCHER)) {
-      val query = Intent(Intent.ACTION_MAIN).addCategory(category)
-      for (info in pm.queryIntentActivities(query, 0)) {
-        val pkg = info.activityInfo.packageName
-        if (pkg in seen) continue
-        val label = info.loadLabel(pm).toString()
-        val icon = iconCache.getOrPut(pkg) { encode(info.loadIcon(pm)) }
-        seen[pkg] = mapOf("pkg" to pkg, "label" to label, "icon" to icon)
-      }
+    // Only real TV apps (leanback launcher entry); phone-style launcher
+    // entries are system leftovers like "Third Party Notices".
+    val query = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LEANBACK_LAUNCHER)
+    for (info in pm.queryIntentActivities(query, 0)) {
+      val pkg = info.activityInfo.packageName
+      if (pkg in seen || HIDDEN.any { pkg.startsWith(it) }) continue
+      val label = info.loadLabel(pm).toString()
+      val icon = iconCache.getOrPut(pkg) { encode(info.loadIcon(pm)) }
+      seen[pkg] = mapOf("pkg" to pkg, "label" to label, "icon" to icon)
     }
     // Our own app first (as in the design), then A-Z.
     return seen.values.sortedWith(

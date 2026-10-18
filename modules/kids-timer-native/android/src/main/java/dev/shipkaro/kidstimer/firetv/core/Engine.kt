@@ -147,7 +147,8 @@ object Engine {
   private fun blockWatching(kind: String, pkg: String, now: Long) {
     if (now - lastTriedLog > MIN_MS) {
       lastTriedLog = now
-      store.log("Tried to watch during a break or after the limit · ${label(pkg)}", now)
+      val why = if (kind == BLOCK_BREAK) "during a break" else "after the daily limit"
+      store.log("Tried to watch $why · ${label(pkg)}", now)
     }
     showBlock(kind, now)
   }
@@ -158,11 +159,11 @@ object Engine {
     val d = store.day
     when {
       ownFg || fg == null && !sl.running -> p.hide()
-      sl.running -> p.update(sleepRemaining(now), sl.paused)
+      sl.running -> p.update(sleepRemaining(now), sl.paused, onHome(fg))
       grown -> p.hide()
-      counted -> p.update(watchRemaining(), false)
+      counted -> p.update(watchRemaining(), false, false)
       // Left the counted app mid-session: show the paused time.
-      d.sessionMs > 0 && d.breakUntil <= now -> p.update(watchRemaining(), true)
+      d.sessionMs > 0 && d.breakUntil <= now -> p.update(watchRemaining(), true, onHome(fg))
       else -> p.hide()
     }
   }
@@ -183,6 +184,15 @@ object Engine {
     if (block == BLOCK_DAILY || block == BLOCK_BREAK) block = null
     store.save()
   }
+
+  private val homePackages: Set<String> by lazy {
+    app.packageManager.queryIntentActivities(
+      Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0,
+    ).map { it.activityInfo.packageName }.toSet()
+  }
+
+  /** The TV home screen draws a clock top-right; the pill moves below it there. */
+  private fun onHome(fg: String?): Boolean = fg != null && fg in homePackages
 
   fun dailyLimitMs(): Long = store.settings.dailyMin * MIN_MS + store.day.extraMs
 

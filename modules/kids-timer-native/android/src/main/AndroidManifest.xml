@@ -17,6 +17,11 @@
       <action android:name="android.intent.action.MAIN" />
       <category android:name="android.intent.category.LAUNCHER" />
     </intent>
+    <!-- The TV home screen, so the pill can sit below its clock. -->
+    <intent>
+      <action android:name="android.intent.action.MAIN" />
+      <category android:name="android.intent.category.HOME" />
+    </intent>
   </queries>
 
   <application>

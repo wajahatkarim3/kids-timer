@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { InstalledApp } from '../../modules/kids-timer-native';
 import { FocusButton } from '../components/FocusButton';
@@ -36,6 +36,19 @@ export function Apps({ onboarding }: { onboarding: boolean }) {
       }
     });
   }, [onboarding]);
+
+  // Scroll in whole rows so the top row is never half hidden.
+  const visibleRows = onboarding ? 5 : 4;
+  const scroll = useRef<ScrollView>(null);
+  const firstVisible = useRef(0);
+  const reveal = (i: number) => {
+    let first = firstVisible.current;
+    if (i < first) first = i;
+    else if (i >= first + visibleRows) first = i - visibleRows + 1;
+    if (first === firstVisible.current) return;
+    firstVisible.current = first;
+    scroll.current?.scrollTo({ y: px(first * (ROW_H + ROW_GAP)), animated: true });
+  };
 
   const counted = new Set(settings.counted);
   const toggle = (pkg: string) => {
@@ -75,10 +88,12 @@ export function Apps({ onboarding }: { onboarding: boolean }) {
       <Title style={styles.title}>Which apps count?</Title>
       {!onboarding && <Subtitle style={styles.subtitle}>Turn On the apps to limit.</Subtitle>}
       <ScrollView
+        ref={scroll}
+        scrollEnabled={false}
         style={[
           styles.list,
           onboarding ? styles.listOnboarding : styles.listSettings,
-          { height: listHeight(onboarding ? 5 : 4), flexGrow: 0 },
+          { height: listHeight(visibleRows), flexGrow: 0 },
         ]}
         contentContainerStyle={styles.listContent}
       >
@@ -93,12 +108,13 @@ export function Apps({ onboarding }: { onboarding: boolean }) {
                 </Text>
                 <Text style={styles.sub}>{on ? '⏱ Counts' : 'Free'}</Text>
               </View>
-              <Toggle on={on} onPress={() => toggle(app.pkg)} preferredFocus={i === 0} />
+              <Toggle on={on} onPress={() => toggle(app.pkg)} preferredFocus={i === 0} onFocus={() => reveal(i)} />
               {!onboarding && (
                 <FocusButton
                   variant="primary"
                   label="▶  Open"
                   onPress={() => native.openApp(app.pkg)}
+                  onFocus={() => reveal(i)}
                   style={styles.open}
                   textStyle={styles.openText}
                 />
@@ -112,11 +128,22 @@ export function Apps({ onboarding }: { onboarding: boolean }) {
   );
 }
 
-export function Toggle({ on, onPress, preferredFocus }: { on: boolean; onPress: () => void; preferredFocus?: boolean }) {
+export function Toggle({
+  on,
+  onPress,
+  preferredFocus,
+  onFocus,
+}: {
+  on: boolean;
+  onPress: () => void;
+  preferredFocus?: boolean;
+  onFocus?: () => void;
+}) {
   return (
     <FocusButton
       variant="raised"
       onPress={onPress}
+      onFocus={onFocus}
       preferredFocus={preferredFocus}
       style={styles.toggle}
       focusedStyle={styles.toggleFocused}
