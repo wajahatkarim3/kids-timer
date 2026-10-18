@@ -80,6 +80,7 @@ declare class KidsTimerNativeModule extends NativeModule<Events> {
   openOverlaySettings(): boolean;
   openAccessibilitySettings(): boolean;
   requestAdmin(): boolean;
+  removeAdmin(): boolean;
 }
 
 const KidsTimerNative = requireNativeModule<KidsTimerNativeModule>('KidsTimerNative');

@@ -19,7 +19,13 @@ export function SetupCheck() {
   const rows = [
     { emoji: '📺', title: 'Timer over apps', on: perms.overlay, action: open(native.openOverlaySettings), cta: 'Settings' },
     { emoji: '👀', title: 'Spot the app + TV off', on: perms.accessibility, action: open(native.openAccessibilitySettings), cta: 'Settings' },
-    { emoji: '🔌', title: 'Backup TV off (optional)', on: perms.admin, action: open(native.requestAdmin), cta: 'Turn on' },
+    {
+      emoji: '🔌',
+      title: 'Backup TV off (optional)',
+      on: perms.admin,
+      action: perms.admin ? () => native.removeAdmin() : open(native.requestAdmin),
+      cta: perms.admin ? 'Turn off' : 'Turn on',
+    },
   ];
 
   return (
@@ -40,8 +46,8 @@ export function SetupCheck() {
               <Text style={styles.rowStatus}>{r.on ? '✓ On' : '● Off'}</Text>
             </View>
             <FocusButton
-              variant={r.on || r.cta === 'Settings' ? 'secondary' : 'primary'}
-              label={r.on || r.cta === 'Settings' ? 'Settings' : r.cta}
+              variant={r.on || r.cta === 'Settings' ? 'raised' : 'primary'}
+              label={r.cta}
               preferredFocus={i === 0}
               onPress={r.action}
               style={styles.button}

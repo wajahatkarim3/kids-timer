@@ -89,7 +89,10 @@ function Router() {
       const r = routeRef.current;
       const onboarding =
         ONBOARDING.has(r.name) || ((r.name === 'secret' || r.name === 'apps') && r.onboarding);
-      if (onboarding || r.name === 'block' || r.name === 'addTime') return;
+      if (onboarding) return;
+      // Block screens stay up while the engine still blocks; once a block was
+      // finished (Done), reopening the app asks for the lock as usual.
+      if ((r.name === 'block' || r.name === 'addTime') && native.getState().block) return;
       nav.reset(entryRoute());
     });
     return () => sub.remove();

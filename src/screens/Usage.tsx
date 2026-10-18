@@ -5,7 +5,7 @@ import { minutesLabel, msToMin, timeOfDay, weekday } from '../format';
 import { useNav } from '../nav';
 import { colors, fonts, px } from '../theme';
 
-const CHART_H = 180;
+const CHART_H = 150;
 const RECENT_ROWS = 5;
 
 // 20 — today vs. allowance, per app, last 7 days and a recent feed.
@@ -63,8 +63,12 @@ export function Usage() {
               return (
                 <View key={d.key} style={styles.barCol}>
                   <Text style={styles.barValue}>{min > 0 ? min : ''}</Text>
-                  <View style={[styles.bar, { height: px(h) }]} />
-                  <Text style={styles.barDay}>{weekday(d.key)}</Text>
+                  <View style={styles.barArea}>
+                    <View style={[styles.bar, { height: px(h) }]} />
+                  </View>
+                  <Text style={styles.barDay} numberOfLines={1}>
+                    {weekday(d.key)}
+                  </Text>
                 </View>
               );
             })}
@@ -90,7 +94,7 @@ const styles = StyleSheet.create({
   titleRow: { flexDirection: 'row', alignItems: 'center', marginTop: px(46) },
   title: { fontFamily: fonts.heavy, fontSize: px(64), color: colors.text, marginLeft: px(20) },
   sub: { fontFamily: fonts.bold, fontSize: px(34), color: colors.textMuted },
-  columns: { flexDirection: 'row', marginTop: px(40), gap: px(96) },
+  columns: { flexDirection: 'row', marginTop: px(32), gap: px(96) },
   left: { width: px(816) },
   right: { flex: 1 },
   label: { fontFamily: fonts.heavy, fontSize: px(30), color: colors.textMuted, letterSpacing: px(1) },
@@ -102,14 +106,28 @@ const styles = StyleSheet.create({
   appTrack: { flex: 1, minWidth: px(160), height: px(20), borderRadius: px(10), backgroundColor: colors.surface },
   appFill: { height: '100%', borderRadius: px(10), backgroundColor: colors.mint },
   appMin: { width: px(170), textAlign: 'right', fontFamily: fonts.bold, fontSize: px(34), color: colors.textMuted },
-  chart: { flexDirection: 'row', alignItems: 'flex-end', gap: px(56), marginTop: px(28), height: px(CHART_H + 90) },
-  barCol: { width: px(52), alignItems: 'center' },
-  barValue: { fontFamily: fonts.bold, fontSize: px(26), color: colors.textMuted, marginBottom: px(4) },
+  chart: { flexDirection: 'row', gap: px(28), marginTop: px(16) },
+  barCol: { width: px(80), alignItems: 'center' },
+  barValue: {
+    height: px(34),
+    lineHeight: px(34),
+    fontFamily: fonts.bold,
+    fontSize: px(26),
+    color: colors.textMuted,
+  },
+  barArea: { height: px(CHART_H), justifyContent: 'flex-end' },
   bar: { width: px(52), borderRadius: px(10), backgroundColor: colors.mint },
-  barDay: { fontFamily: fonts.bold, fontSize: px(30), color: colors.textMuted, marginTop: px(6) },
-  recentLabel: { marginTop: px(42) },
-  eventRow: { flexDirection: 'row', marginTop: px(8) },
-  eventTime: { width: px(160), fontFamily: fonts.regular, fontSize: px(32), color: colors.textMuted },
-  eventText: { flex: 1, fontFamily: fonts.bold, fontSize: px(32), color: colors.text },
+  barDay: {
+    height: px(40),
+    lineHeight: px(40),
+    fontFamily: fonts.bold,
+    fontSize: px(30),
+    color: colors.textMuted,
+    marginTop: px(6),
+  },
+  recentLabel: { marginTop: px(30) },
+  eventRow: { flexDirection: 'row', height: px(42), alignItems: 'center' },
+  eventTime: { width: px(160), fontFamily: fonts.regular, fontSize: px(31), color: colors.textMuted },
+  eventText: { flex: 1, fontFamily: fonts.bold, fontSize: px(31), color: colors.text },
   eventEmpty: { fontFamily: fonts.bold, fontSize: px(32), color: colors.textMuted, marginTop: px(8) },
 });

@@ -110,16 +110,23 @@ class KidsTimerModule : Module() {
       )
     }
 
+    Function("removeAdmin") {
+      val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+      runCatching { dpm.removeActiveAdmin(Engine.adminComponent(context)) }.isSuccess
+    }
+
     Function("requestAdmin") {
-      startFirst(
-        Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
-          .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, Engine.adminComponent(context))
-          .putExtra(
-            DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-            "Lets Kids Timer turn the TV screen off when time is up.",
-          ),
-        Intent(Settings.ACTION_SECURITY_SETTINGS),
-      )
+      // DeviceAdminAdd checks the calling package, so it must be started for
+      // a result from our own activity (not as a new task).
+      val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+        .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, Engine.adminComponent(context))
+        .putExtra(
+          DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+          "Lets Kids Timer turn the TV screen off when time is up.",
+        )
+      val activity = appContext.currentActivity
+      runCatching { activity!!.startActivityForResult(intent, REQUEST_ADMIN) }.isSuccess ||
+        startFirst(Intent(Settings.ACTION_SECURITY_SETTINGS))
     }
   }
 
@@ -128,6 +135,10 @@ class KidsTimerModule : Module() {
     val current = window.callback ?: return
     if (current is DigitKeyCallback) return
     window.callback = DigitKeyCallback(current) { sendEvent("onDigit", mapOf("digit" to it)) }
+  }
+
+  companion object {
+    private const val REQUEST_ADMIN = 4711
   }
 
   // Fire OS hides some settings screens; fall back until one opens.
