@@ -62,3 +62,23 @@ Each entry: task, steps, expected vs. actual, severity, workaround, suggestion.
 - **Severity:** Medium.
 - **Workaround:** `startActivityForResult` from our own activity.
 - **Suggestion:** Note this in the TV/Fire OS device-admin docs.
+
+## 7. Overlay permission screen can't jump to our app on Android TV
+
+- **Task:** Send the parent straight to the "Display over other apps" toggle for Kids Timer.
+- **Steps:** `Settings.ACTION_MANAGE_OVERLAY_PERMISSION` with `package:dev.shipkaro.kidstimer.firetv`.
+- **Expected:** Kids Timer's own toggle (as on phones).
+- **Actual:** TV Settings ignores the package and opens the full list; it first renders empty for a moment, then the parent has to scroll to find the app.
+- **Severity:** Low (confusing for parents, looks broken for a second).
+- **Workaround:** None in-app; the screen text names the setting.
+- **Suggestion:** Honour the package URI on TV settings (Fire OS and Google TV), or document the expected path for parental-control apps.
+
+## 8. Accessibility service is switched off by every reinstall
+
+- **Task:** Iterate on native code on the TV emulator.
+- **Steps:** `adb install -r`, `am force-stop` or `pm clear` while the service is enabled.
+- **Expected:** The enabled service survives an update of the same package.
+- **Actual:** The service is removed from `enabled_accessibility_services` each time, so every build means turning it on again.
+- **Severity:** Low (dev loop only), but it hides real bugs when you forget.
+- **Workaround:** Re-run the two `settings put secure …` commands after each install.
+- **Suggestion:** Mention this in the Fire OS testing docs for accessibility-based apps.

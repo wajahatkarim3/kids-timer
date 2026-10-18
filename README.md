@@ -8,6 +8,7 @@ Made for the Build, Ship, Shape: Amazon Developer Hackathon (Fire TV track, fami
 
 - Design and behaviour spec: [PROMPT.md](PROMPT.md) and [screenshots/](screenshots/)
 - Developer-experience notes: [FRICTION_LOG.md](FRICTION_LOG.md)
+- Status, test log and open items: [PROGRESS.md](PROGRESS.md)
 
 ## What it does
 
@@ -66,15 +67,20 @@ Fire TV Stick: **Settings › My Fire TV › Developer options › ADB debugging
 
 ### Permissions
 
-The setup flow walks through both permissions. Fire OS can hide these settings screens; from a computer on the same network:
+Kids Timer needs two permissions, and setup won't continue without them (there is no Skip): the pill, counting and TV off all depend on them.
+
+1. **Display over other apps** — "Open settings" lands on the system list; turn Kids Timer on there.
+2. **Accessibility › Kids Timer** — lets the app see which app is in front and turn the TV off.
+
+If either is turned off later, Home shows a "Setup needs a grown-up" banner with **Fix**, which opens Setup check.
+
+Developer shortcut (emulator / debugging only): reinstalling, `am force-stop` or `pm clear` turns the accessibility service off. To turn both back on without clicking through settings:
 
 ```bash
 adb shell appops set dev.shipkaro.kidstimer.firetv SYSTEM_ALERT_WINDOW allow
 adb shell settings put secure enabled_accessibility_services dev.shipkaro.kidstimer.firetv/dev.shipkaro.kidstimer.firetv.a11y.WatchService
 adb shell settings put secure accessibility_enabled 1
 ```
-
-`adb shell am force-stop` (and `pm clear`) turns the accessibility service off. Re-run the two `settings put` lines afterwards.
 
 "Backup TV off" (Setup check) is an optional device admin with only the *lock screen* policy. Turn it off from the same row before uninstalling.
 
