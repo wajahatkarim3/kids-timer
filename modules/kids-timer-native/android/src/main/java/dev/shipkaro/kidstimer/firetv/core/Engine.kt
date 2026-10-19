@@ -103,6 +103,8 @@ object Engine {
     val sl = store.sleep
     if (sl.running && !sl.paused && sl.endAt <= now) sleepEnded(now)
 
+    if (d.breakUntil in 1..now) breakOver(d.breakUntil, fg, ownFg, grown, screenOn, now)
+
     // Daily rules: only while a counted app is actually on screen.
     val counted = !grown && screenOn && !ownFg && fg != null && fg in s.counted
     if (counted) {
@@ -120,6 +122,7 @@ object Engine {
   private fun countWatching(pkg: String, dt: Long, now: Long) {
     val s = store.settings
     val d = store.day
+    if (block == BLOCK_BREAK) block = null
     if (d.sessionMs == 0L) store.log("Session started · ${label(pkg)}", now)
     d.usedMs += dt
     d.sessionMs += dt
@@ -142,6 +145,27 @@ object Engine {
       }
     }
     store.save()
+  }
+
+  /**
+   * The break just ran out. The kid may have gone to the TV home screen to
+   * wait, so bring up "Ready when you are" there; anywhere else, keep it for
+   * the next time the app opens.
+   */
+  private fun breakOver(endedAt: Long, fg: String?, ownFg: Boolean, grown: Boolean, screenOn: Boolean, now: Long) {
+    store.day.breakUntil = 0
+    store.save()
+    if (grown) return
+    store.log("Break over", now)
+    // Ended long ago (the engine was off): nobody is waiting for it.
+    if (now - endedAt > 5 * MIN_MS) {
+      if (block == BLOCK_BREAK) block = null
+      return
+    }
+    block = BLOCK_BREAK
+    if (ownFg) return
+    if (screenOn && onHome(fg)) showBlock(BLOCK_BREAK, now, force = true)
+    else pendingBlock = BLOCK_BREAK
   }
 
   private fun blockWatching(kind: String, pkg: String, now: Long) {

@@ -4,8 +4,11 @@ import android.accessibilityservice.AccessibilityService
 import android.content.ComponentName
 import android.content.Context
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityWindowInfo
 import dev.shipkaro.kidstimer.firetv.core.EngineService
 
 /**
@@ -17,7 +20,36 @@ class WatchService : AccessibilityService() {
   override fun onServiceConnected() {
     super.onServiceConnected()
     instance = this
+    // A window change only fires on the next app switch, so look up the app
+    // that is already open (the service may restart mid-show).
+    foregroundPackage = null
+    findAppInFront(attempt = 0)
     EngineService.start(this)
+  }
+
+  private val handler = Handler(Looper.getMainLooper())
+
+  private fun findAppInFront(attempt: Int) {
+    if (instance !== this || foregroundPackage != null) return
+    val pkg = runCatching { appInFront() }.getOrNull()
+    when {
+      pkg != null -> setForeground(pkg)
+      // The window list can be empty right after connecting.
+      attempt < 5 -> handler.postDelayed({ findAppInFront(attempt + 1) }, 500)
+    }
+  }
+
+  private fun appInFront(): String? {
+    val apps = windows.filter { it.type == AccessibilityWindowInfo.TYPE_APPLICATION }
+    val top = apps.firstOrNull { it.isFocused || it.isActive } ?: apps.firstOrNull() ?: return null
+    val pkg = top.root?.packageName?.toString() ?: return null
+    return pkg.takeUnless { it in IGNORED }
+  }
+
+  private fun setForeground(pkg: String) {
+    if (pkg == foregroundPackage) return
+    foregroundPackage = pkg
+    listeners.toList().forEach { it(pkg) }
   }
 
   override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -28,16 +60,14 @@ class WatchService : AccessibilityService() {
     // Overlays (including our own pill), toasts and dialogs also fire this
     // event. Only a real activity means the app in front changed.
     if (!isActivity(pkg, event.className?.toString())) return
-    if (pkg != foregroundPackage) {
-      foregroundPackage = pkg
-      listeners.toList().forEach { it(pkg) }
-    }
+    setForeground(pkg)
   }
 
   override fun onInterrupt() = Unit
 
   override fun onDestroy() {
     instance = null
+    handler.removeCallbacksAndMessages(null)
     super.onDestroy()
   }
 
