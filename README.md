@@ -54,6 +54,10 @@ Everything is driven by the remote: up / down / left / right, OK and Back, with 
 | Native | Local Expo module in [`modules/kids-timer-native`](modules/kids-timer-native) |
 | Target | Fire OS (Fire TV Stick); developed on an Android TV emulator |
 
+## Try it
+
+Test builds for a Fire TV Stick are on the [Releases](https://github.com/wajahatkarim3/kids-timer/releases) page (debug-signed, ARM). Sideload the APK with Downloader or `adb install`, then turn on Kids Timer under **Settings › Accessibility**.
+
 ## Run it
 
 Requirements: Node 20+, JDK 17, Android SDK (`ANDROID_HOME` set), and an Android TV emulator or a Fire TV Stick with ADB debugging on.
@@ -65,6 +69,14 @@ npm run android           # builds, installs and starts Metro
 ```
 
 Fire TV Stick: **Settings › My Fire TV › Developer options › ADB debugging** on, then `adb connect <fire-tv-ip>:5555`.
+
+Standalone APK (JS bundled, no Metro needed), as published on Releases:
+
+```bash
+cd android
+NODE_ENV=production ./gradlew :app:assembleRelease -PreactNativeArchitectures=armeabi-v7a,arm64-v8a
+# → android/app/build/outputs/apk/release/app-release.apk
+```
 
 ### Permissions
 

@@ -7,7 +7,7 @@ Last updated: 2026-10-19.
 
 ## Status
 
-All 33 screens from [screenshots/](screenshots/) are built and the native engine works end to end on the Android TV emulator (`FireTV_API31`, Google TV, API 31, 1920×1080). Not yet run on a real Fire TV Stick.
+All 33 screens from [screenshots/](screenshots/) are built and the native engine works end to end on the Android TV emulator (`FireTV_API31`, Google TV, API 31, 1920×1080). Not yet run on a real Fire TV Stick: test build [`v0.1.0-test.1`](https://github.com/wajahatkarim3/kids-timer/releases/tag/v0.1.0-test.1) is out to a tester with one.
 
 ## Verified on the emulator
 
@@ -41,7 +41,8 @@ All 33 screens from [screenshots/](screenshots/) are built and the native engine
 ## Open items
 
 1. **Fire TV Stick run.** Accessibility service listing, the pill and screen-off on real Fire OS are unverified. If Fire OS doesn't list third-party accessibility services, parents get stuck at that step.
-2. **Submission:** demo video (< 3 min, on a real Fire TV), Devpost text, product feedback, friction log (8 entries in [FRICTION_LOG.md](FRICTION_LOG.md)).
+2. **Crashed accessibility service stays off.** After `am crash`, Android lists the service under "Crashed services" and doesn't rebind it until accessibility is toggled; the app still reports it as on (friction log #10). Needs a real "is it bound?" check (e.g. `WatchService.instance` + heartbeat) so the Fix banner shows.
+3. **Submission:** demo video (< 3 min, on a real Fire TV), Devpost text, product feedback, friction log (10 entries in [FRICTION_LOG.md](FRICTION_LOG.md)).
 
 ## Testing tips
 
@@ -52,6 +53,8 @@ All 33 screens from [screenshots/](screenshots/) are built and the native engine
 
 ## Change log
 
+- `v0.1.0-test.1` pre-release on GitHub: first test APK for a real Fire TV (built from `f009190`)
+- `f009190` docs: progress for break and restart fixes, test APK build
 - `9168d74` fix: show Ready after a break ends away, find the open app on restart
 - `5f72877` docs: change log in progress file, friction log workaround
 - `30d1dc6` feat: draw the pill as an accessibility overlay, one permission

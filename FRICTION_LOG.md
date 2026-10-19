@@ -82,3 +82,24 @@ Each entry: task, steps, expected vs. actual, severity, workaround, suggestion.
 - **Severity:** Low (dev loop only), but it hides real bugs when you forget.
 - **Workaround:** Re-run the two `settings put secure …` commands after each install.
 - **Suggestion:** Mention this in the Fire OS testing docs for accessibility-based apps.
+
+## 9. No way to ask an accessibility service which app is already open
+
+- **Task:** Count screen time only while a counted app is in front, including right after the service (re)starts.
+- **Steps:** Service listens to `TYPE_WINDOW_STATE_CHANGED` with `canRetrieveWindowContent="false"`. Restarted the process while Play Store was open.
+- **Expected:** Some way to learn the current foreground app on connect.
+- **Actual:** Window-state events only fire on the next app switch, so a show already playing was never counted. Listening to `TYPE_WINDOW_CONTENT_CHANGED` instead didn't help: an idle screen or a playing video sends none.
+- **Severity:** Medium (time silently not counted after a low-memory restart).
+- **Workaround:** Declared `canRetrieveWindowContent` + `flagRetrieveInteractiveWindows` and read the focused `TYPE_APPLICATION` window's package from `getWindows()` on connect. We only need the package name, not the content.
+- **Suggestion:** A foreground-package query for parental-control apps on Fire OS that doesn't need window-content access.
+
+## 10. A crashed accessibility service stays off until toggled
+
+- **Task:** Check the engine recovers after a crash.
+- **Steps:** `adb shell am crash dev.shipkaro.kidstimer.firetv` with the service enabled.
+- **Expected:** The service rebinds when the process comes back.
+- **Actual:** `dumpsys accessibility` lists it under "Crashed services" and keeps the old binding; it is still in `enabled_accessibility_services`, so the app's own "is it on?" check says yes. It only came back after turning accessibility off and on.
+- **Severity:** High for parental controls (limits silently stop after one crash).
+- **Workaround:** None yet; tracked as an open item.
+- **Suggestion:** Rebind crashed services automatically after a back-off, or expose the crashed state to the app so it can ask the parent to re-enable it.
+
