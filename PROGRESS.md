@@ -35,22 +35,25 @@ All 33 screens from [screenshots/](screenshots/) are built and the native engine
 - Pill covered the Google TV clock on the home screen
 - Removed Skip and adb help from setup
 - Dropped "Display over other apps": the pill is an accessibility overlay, so setup needs one permission (block screens and screen-off verified with the overlay permission denied)
+- Break ran out while the kid waited on the TV home screen → nothing happened; now "Ready when you are" opens there (elsewhere it waits for the next app open)
+- Accessibility service restarted while a counted app was open → counting waited for the next app switch; it now looks up the open app on connect (needs `canRetrieveWindowContent`, same consent dialog on Android 10+)
 
 ## Open items
 
 1. **Fire TV Stick run.** Accessibility service listing, the pill and screen-off on real Fire OS are unverified. If Fire OS doesn't list third-party accessibility services, parents get stuck at that step.
-2. **Break over while away:** "Ready when you are" only shows if the break screen is still open.
-3. **Accessibility restart while an app is already open:** counting starts only after the next app switch.
-4. **Submission:** demo video (< 3 min, on a real Fire TV), Devpost text, product feedback, friction log (8 entries in [FRICTION_LOG.md](FRICTION_LOG.md)).
+2. **Submission:** demo video (< 3 min, on a real Fire TV), Devpost text, product feedback, friction log (8 entries in [FRICTION_LOG.md](FRICTION_LOG.md)).
 
 ## Testing tips
 
 - Fresh start: `adb shell pm clear dev.shipkaro.kidstimer.firetv`, then clear `enabled_accessibility_services`. "Backup TV off" (device admin) survives `pm clear`; turn it off in Setup check.
 - After every reinstall, turn the accessibility service back on (see README, Permissions).
+- Test APK for a real device (JS bundled, debug-signed, ARM only): `NODE_ENV=production ./gradlew :app:assembleRelease -PreactNativeArchitectures=armeabi-v7a,arm64-v8a` → `android/app/build/outputs/apk/release/app-release.apk`. The debug APK needs Metro, so it won't run on its own.
 - The emulator also has an older prototype (`dev.shipkaro.kidstimer`) installed; it shows up as a second "Kids Timer" in the apps list.
 
 ## Change log
 
+- `9168d74` fix: show Ready after a break ends away, find the open app on restart
+- `5f72877` docs: change log in progress file, friction log workaround
 - `30d1dc6` feat: draw the pill as an accessibility overlay, one permission
 - `80bd016` docs: progress file, permissions section, friction log
 - `c3e92ca` fix: leave Kids Timer itself out of the apps list
