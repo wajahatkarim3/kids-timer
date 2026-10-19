@@ -48,3 +48,21 @@ All 33 screens from [screenshots/](screenshots/) are built and the native engine
 - Fresh start: `adb shell pm clear dev.shipkaro.kidstimer.firetv`, then clear `enabled_accessibility_services`. "Backup TV off" (device admin) survives `pm clear`; turn it off in Setup check.
 - After every reinstall, turn the accessibility service back on (see README, Permissions).
 - The emulator also has an older prototype (`dev.shipkaro.kidstimer`) installed; it shows up as a second "Kids Timer" in the apps list.
+
+## Change log
+
+- `30d1dc6` feat: draw the pill as an accessibility overlay, one permission
+- `80bd016` docs: progress file, permissions section, friction log
+- `c3e92ca` fix: leave Kids Timer itself out of the apps list
+- `6381ad3` feat: require both permissions, add the Fix banner
+- `41fef7a` fix: issues from the earlier prototypes' screenshot runs
+- `0b68e68` feat: TV banner and icon, grown-up banner focus, docs
+- `5e285cb` fix: usage layout, backup TV off and re-lock after blocks
+- `3937ad2` fix: show whole rows in the apps list
+- `f08b7ba` fix: keep state events flowing and the pill visible
+- `69fc52c` feat: build all screens on top of the native engine
+- `c95080f` feat: add native timer engine, countdown pill and app list
+- `cd7c114` chore: stop tracking native module build output
+- `bc0a0ca` feat: add Kotlin native module with app watch service
+- `351fdf8` feat: add design tokens, Nunito fonts and focusable button
+- `0ed7443` chore: scaffold Expo 54 + react-native-tvos 0.81 TV app

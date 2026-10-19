@@ -70,7 +70,7 @@ Each entry: task, steps, expected vs. actual, severity, workaround, suggestion.
 - **Expected:** Kids Timer's own toggle (as on phones).
 - **Actual:** TV Settings ignores the package and opens the full list; it first renders empty for a moment, then the parent has to scroll to find the app.
 - **Severity:** Low (confusing for parents, looks broken for a second).
-- **Workaround:** None in-app; the screen text names the setting.
+- **Workaround:** Dropped the permission entirely: the pill is now drawn as an accessibility overlay (`TYPE_ACCESSIBILITY_OVERLAY`), so setup needs only the accessibility service.
 - **Suggestion:** Honour the package URI on TV settings (Fire OS and Google TV), or document the expected path for parental-control apps.
 
 ## 8. Accessibility service is switched off by every reinstall
